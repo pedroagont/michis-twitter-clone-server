@@ -44,4 +44,17 @@ app.post('/miaus', async (req, res) => {
   }
 });
 
+app.get('/miaus', async (req, res) => {
+  const miaus = [];
+  try {
+    const snapshot = await db.collection('miaus').get();
+    snapshot.forEach(doc => {
+      miaus.push(doc.data());
+    });
+    res.status(200).json(miaus);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
