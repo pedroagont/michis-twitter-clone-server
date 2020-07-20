@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
+const Filter = require('bad-words');
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+const filter = new Filter();
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
@@ -29,8 +31,8 @@ app.post('/miaus', async (req, res) => {
   if(isValidMiau(req.body)) {
     const { name, content } = req.body
     const miau = {
-      name: name.toString(),
-      content: content.toString(),
+      name: filter.clean(name.toString()),
+      content: filter.clean(content.toString()),
       timestamp: new Date(),
     }
     await db.collection('miaus').doc().set(miau)
