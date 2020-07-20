@@ -20,7 +20,7 @@ const db = admin.firestore();
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
-const isValidMiau= (miau) => {
+const isValidMiau = (miau) => {
   return miau.name && miau.name.toString().trim() !== '' &&
          miau.content && miau.content.toString().trim() !== '';
 }
@@ -31,6 +31,7 @@ app.post('/miaus', async (req, res) => {
     const miau = {
       name: name.toString(),
       content: content.toString(),
+      timestamp: new Date(),
     }
     await db.collection('miaus').doc().set(miau)
       .then(response => {
@@ -47,7 +48,7 @@ app.post('/miaus', async (req, res) => {
 app.get('/miaus', async (req, res) => {
   const miaus = [];
   try {
-    const snapshot = await db.collection('miaus').get();
+    const snapshot = await db.collection('miaus').orderBy('timestamp', 'desc').get();
     snapshot.forEach(doc => {
       miaus.push(doc.data());
     });
