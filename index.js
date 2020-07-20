@@ -5,9 +5,14 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 const Filter = require('bad-words');
+const rateLimit = require("express-rate-limit");
 
 app.use(cors());
 app.use(express.json());
+app.use(rateLimit({
+  windowMs: 30 * 1000, // 30 sec
+  max: 5 // limit each IP to 5 requests per windowMs
+}));
 
 const admin = require('firebase-admin');
 const serviceAccount = require(`./${process.env.FIREBASE_JSON}`);
